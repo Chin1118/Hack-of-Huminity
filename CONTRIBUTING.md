@@ -14,6 +14,60 @@
 
 ---
 
+## 2. Setting Up a Virtual Environment
+
+To keep project dependencies isolated and avoid conflicts with your global Python installation, **using a virtual environment is required**.
+
+---
+
+### Prerequisites
+- **Python 3.x** installed  
+- **pip** (Python package manager)
+
+---
+
+### Installation Steps
+
+#### 1. Create the virtual environment
+Navigate to the project root directory and run:
+```bash
+python -m venv .venv
+```
+#### 2. Activate the environment
+* Windows:
+
+```bash
+.venv\Scripts\activate
+```
+* macOS / Linux:
+
+```bash
+source .venv/bin/activate
+```
+#### 3. Install dependencies Once the environment is activated, install the required packages:
+
+````bash
+pip install --upgrade pip
+pip install -r requirements.txt
+````
+
+---
+
+### Managing Dependencies
+* Adding new packages: If you install a new library during development, please update the requirements file:
+
+```bash
+pip freeze > requirements.txt
+```
+* Leaving the environment: To exit the virtual environment, simply type:
+
+```bash
+deactivate
+```
+Note: Do not commit the .venv folder to the repository. Ensure it is listed in your .gitignore.
+
+---
+
 ## 2. Branching Strategy
 
 ### Main branches
