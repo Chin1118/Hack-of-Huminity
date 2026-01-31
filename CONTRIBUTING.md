@@ -18,13 +18,9 @@
 
 To keep project dependencies isolated and avoid conflicts with your global Python installation, **using a virtual environment is required**.
 
----
-
 ### Prerequisites
 - **Python 3.x** installed  
 - **pip** (Python package manager)
-
----
 
 ### Installation Steps
 
@@ -51,8 +47,6 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ````
 
----
-
 ### Managing Dependencies
 * Adding new packages: If you install a new library during development, please update the requirements file:
 
@@ -68,7 +62,7 @@ Note: Do not commit the .venv folder to the repository. Ensure it is listed in y
 
 ---
 
-## 2. Branching Strategy
+## 3. Branching Strategy
 
 ### Main branches
 - `main`
@@ -91,7 +85,7 @@ Examples:
 
 ---
 
-## 3. Commit Message Convention
+## 4. Commit Message Convention
 
 Use clear, descriptive commit messages:
 
@@ -113,11 +107,11 @@ Examples:
 
 ---
 
-## 4. To Setup File Structure
+## 5. To Setup File Structure
 - Open a terminal (PowerShell / VS Code Terminal)
 - Make sure you are in the project root directory (e.g. `...\program`)
 - Run the following command:
-``` Text
+``` bash
 $dirs = @(
     "backend/models",
     "backend/features/task_assignment",
