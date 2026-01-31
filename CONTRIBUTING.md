@@ -58,3 +58,39 @@ Examples:
 - `docs: update PRD and diagrams`
 
 ---
+
+## 4. To Setup File Structure
+- Open a terminal (PowerShell / VS Code Terminal)
+- Make sure you are in the project root directory (e.g. `...\program`)
+- Run the following command:
+``` Text
+$dirs = @(
+    "backend/models",
+    "backend/features/task_assignment",
+    "backend/features/path_optimization",
+    "backend/features/carbon",
+    "backend/features/realtime",
+    "backend/features/visualization",
+    "backend/api",
+    "backend/utils",
+
+    "frontend/lib/config",
+    "frontend/lib/models",
+    "frontend/lib/features/task_assignment",
+    "frontend/lib/features/path_optimization",
+    "frontend/lib/features/carbon",
+    "frontend/lib/features/realtime",
+    "frontend/lib/features/visualization",
+    "frontend/lib/services",
+    "frontend/lib/widgets",
+
+    "docs",
+    "tests"
+)
+
+foreach ($d in $dirs) {
+    New-Item -ItemType Directory -Force -Path $d
+}
+```
+
+---
