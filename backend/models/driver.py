@@ -9,12 +9,3 @@ class Driver:
     capacity: float = 0.0                # in kg, default 0.0
     available: bool = True
 
-    @staticmethod
-    def from_json(d: dict) -> "Driver":
-        return Driver(
-            id=d["id"],
-            start_location=tuple(d["start_location"]),
-            vehicle_type=d["vehicle_type"],
-            capacity=float(d.get("capacity", 0.0)),
-            available=d.get("available", True)
-        )
