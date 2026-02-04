@@ -10,9 +10,8 @@ DRIVERS_JSON_PATH = os.path.join(
     "drivers.json"
 )
 
-
+# Convert JSON dict to Driver object
 def json_to_driver(data: dict) -> Driver:
-    # Convert JSON dict to Driver object
     return Driver(
         id=data["id"],
         start_location=tuple(data["start_location"]),
@@ -22,8 +21,8 @@ def json_to_driver(data: dict) -> Driver:
     )
 
 
+# Convert Driver object to JSON dict
 def driver_to_json(driver: Driver) -> dict:
-    # Convert Driver object to JSON dict
     return {
         "id": driver.id,
         "start_location": list(driver.start_location),
@@ -33,8 +32,8 @@ def driver_to_json(driver: Driver) -> dict:
     }
 
 
+# Load all drivers from JSON file
 def load_drivers() -> List[Driver]:
-    # Load all drivers from JSON file
     if not os.path.exists(DRIVERS_JSON_PATH): # Check if the JSON file exists
         return []
     
@@ -46,8 +45,8 @@ def load_drivers() -> List[Driver]:
         raise ValueError(f"JSON file format error: {e}")
 
 
+# Save drivers to JSON file
 def save_drivers(drivers: List[Driver]) -> None:
-    # Save drivers to JSON file
     os.makedirs(os.path.dirname(DRIVERS_JSON_PATH), exist_ok=True) # Create the directory if it doesn't exist
     
     data = [driver_to_json(driver) for driver in drivers]
@@ -56,8 +55,8 @@ def save_drivers(drivers: List[Driver]) -> None:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+# Find a single driver by ID
 def find_driver_by_id(driver_id: int) -> Optional[Driver]: # May use in validation
-    # Find a single driver by ID
     drivers = load_drivers()
     for driver in drivers:
         if driver.id == driver_id:
@@ -65,8 +64,8 @@ def find_driver_by_id(driver_id: int) -> Optional[Driver]: # May use in validati
     return None
 
 
+# Add a new driver
 def add_driver(driver: Driver) -> Driver:
-    # Add a new driver
     drivers = load_drivers()
     
     # Auto-generate ID (find max ID + 1)
@@ -81,8 +80,8 @@ def add_driver(driver: Driver) -> Driver:
     return driver
 
 
+# Update a driver
 def update_driver(driver_id: int, updated_driver: Driver) -> Optional[Driver]:
-    # Update a driver
     drivers = load_drivers()
     
     for i, driver in enumerate(drivers):
@@ -96,8 +95,8 @@ def update_driver(driver_id: int, updated_driver: Driver) -> Optional[Driver]:
     return None
 
 
+# Delete a driver
 def delete_driver(driver_id: int) -> bool:
-    # Delete a driver
     drivers = load_drivers()
     
     for i, driver in enumerate(drivers):
