@@ -1,51 +1,43 @@
 {
+  "drivers": [
+    {
+      "id": 1,
+      "start_location": [0.0, 0.0],
+      "vehicle_type": "ev",
+      "capacity": 50.0,
+      "available": true
+    },
+    {
+      "id": 2,
+      "start_location": [5.0, 5.0],
+      "vehicle_type": "fuel",
+      "capacity": 100.0,
+      "available": true
+    }
+  ],
   "tasks": [
     {
       "id": 101,
       "weight": 10.0,
       "pickup": {
-        "location": [
-          1.0,
-          2.0
-        ],
-        "time_window": [
-          8.0,
-          10.0
-        ]
+        "location": [1.0, 2.0],
+        "time_window": [8.0, 10.0]
       },
       "dropoff": {
-        "location": [
-          3.0,
-          4.0
-        ],
-        "time_window": [
-          11.0,
-          13.0
-        ]
+        "location": [3.0, 4.0],
+        "time_window": [11.0, 13.0]
       }
     },
     {
       "id": 102,
       "weight": 20.0,
       "pickup": {
-        "location": [
-          2.0,
-          1.0
-        ],
-        "time_window": [
-          9.0,
-          11.0
-        ]
+        "location": [2.0, 1.0],
+        "time_window": [9.0, 11.0]
       },
       "dropoff": {
-        "location": [
-          6.0,
-          8.0
-        ],
-        "time_window": [
-          14.0,
-          16.0
-        ]
+        "location": [6.0, 8.0],
+        "time_window": [14.0, 16.0]
       }
     }
   ]
