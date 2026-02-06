@@ -4,7 +4,7 @@ import json
 import os
 
 # Load data from JSON file
-def load_system_data():
+def load_data():
     json_path = os.path.join(os.path.dirname(__file__), '../../utils/data.json')
     try:
         with open(json_path, 'r') as f:
@@ -16,14 +16,14 @@ def load_system_data():
 
 def visualize_map(frame):
     # Load fresh data from JSON file each time
-    system_data = load_system_data()
+    data = load_data()
     axes.clear()
 
     # Lists to keep track of all coordinates for auto-scaling
     all_x_coords = []
     all_y_coords = []
     
-    for task in system_data['tasks']:
+    for task in data['tasks']:
         pickup_x, pickup_y = task['pickup']['location']
         dropoff_x, dropoff_y = task['dropoff']['location']
 
@@ -68,7 +68,7 @@ def visualize_map(frame):
             linestyle='--'
         )
 
-    for driver in system_data['drivers']:
+    for driver in data['drivers']:
         x, y = driver['start_location']
 
         # Add driver coordinates to our tracking lists
@@ -98,7 +98,7 @@ def visualize_map(frame):
     axes.set_title("Real-Time Visualization")
     axes.set_xlabel("X")
     axes.set_ylabel("Y")
-    axes.grid(True, linestyle='--', alpha=0.6)
+    axes.grid(True, linestyle='--', alpha=0.3)
 
     # Auto-scale axes based on all coordinates
     padding = 2
