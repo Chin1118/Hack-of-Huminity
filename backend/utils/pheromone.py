@@ -1,4 +1,6 @@
 from typing import List, Dict
+import json
+import os
 
 def init_pheromone_matrix(drivers: List, tasks: List, init_value: float = 1.0) -> Dict[str, Dict[str, float]]:
     """
@@ -62,3 +64,22 @@ def update_pheromone_matrix(tau: Dict[str, Dict[str, float]],
         for j in tau[i]:
             tau[i][j] *= (1.0 - evaporation_rate)
     return tau
+
+PHEROMONE_FILE = "backend/data/pheromone_matrix.json"
+
+def save_pheromone_matrix(tau: Dict[str, Dict[str, float]], filepath: str = PHEROMONE_FILE):
+    """
+    Save pheromone matrix to a JSON file.
+    """
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'w') as f:
+        json.dump(tau, f)
+
+def load_pheromone_matrix(filepath: str = PHEROMONE_FILE) -> Dict[str, Dict[str, float]]:
+    """
+    Load pheromone matrix from a JSON file. return None if file not exists
+    """
+    if not os.path.exists(filepath):
+        return None
+    with open(filepath, 'r') as f:
+        return json.load(f)
