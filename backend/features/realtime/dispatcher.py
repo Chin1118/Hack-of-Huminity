@@ -21,7 +21,8 @@ class Dispatcher:
         if not available_drivers:
             print("[Dispatcher] No available drivers!")
             return
-
+        
+        # TODO: change the assignment method to honger version
         best_driver_id = assign_task_to_driver(task, available_drivers)
         best_driver = self.drivers[best_driver_id]
         print(f"[Dispatcher] Assigned Task {task.id} to Driver {best_driver_id} ({best_driver.vehicle_type}).")
