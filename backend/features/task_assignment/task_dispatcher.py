@@ -1,23 +1,30 @@
 import numpy as np
 from scipy.spatial import KDTree
 
-class TaskDispatcher:
-    def __init__(self, drivers):
-
-        self.available_drivers = [d for d in drivers if d["available"]]
-        self.drivers_locations = np.array([d["start_location"] for d in self.available_drivers])
+class TaskAssigner:
+    def __init__(self, tasks):
         
-        self.tree = KDTree(self.drivers_locations)
-
-    def find_target_drivers(self, task):
+        self.pending_tasks = [t for t in tasks if t.get("status") == "pending"]
         
-        pickup_location = task['pickup']['location'] # [lat, lon]
+        if not self.pending_tasks:
+            self.task_locations = np.empty((0, 2))
+            self.tree = None
+        else:
+            self.task_locations = np.array([t['pickup']['location'] for t in self.pending_tasks])
+            self.tree = KDTree(self.task_locations)
 
-        k = min(3, len(self.available_drivers))
-        indices = self.tree.query(pickup_location, k=k)[1]
+    def get_tasks_for_driver(self, driver, max_tasks=3):
+
+        if self.tree is None:
+            return []
+
+        driver_location = driver['start_location'] # [lat, lon]
+
+        k = min(max_tasks, len(self.pending_tasks))
+        indices = self.tree.query(driver_location, k=k)
 
         if k == 1:
             indices = [indices]
 
-        target_drivers = [self.available_drivers[i] for i in indices]
-        return target_drivers
+        nearby_tasks = [self.pending_tasks[i] for i in indices]
+        return nearby_tasks
