@@ -37,3 +37,15 @@ pip install -r requirements.txt
 ````
 
 ---
+
+## 2. Start Backend Server
+
+````bash
+cd backend
+uvicorn main:app --reload
+````
+
+---
+
+
+
