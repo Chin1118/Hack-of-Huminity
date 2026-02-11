@@ -8,4 +8,5 @@ class Driver:
     vehicle_type: str                    # 'fuel' or 'ev'
     capacity: float = 0.0                # in kg, default 0.0
     available: bool = True
+    tasklist: list = None               # List of assigned tasks
 

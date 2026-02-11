@@ -19,6 +19,6 @@ class Task:
             pickup_time_window=tuple(t["pickup"]["time_window"]),
             dropoff_location=tuple(t["dropoff"]["location"]),
             dropoff_time_window=tuple(t["dropoff"]["time_window"]),
-            weight=t["weight"]
+            weight=t["weight"],
             status=t.get("status", "unassigned")
         )
