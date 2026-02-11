@@ -9,6 +9,7 @@ class Task:
     dropoff_location: Tuple[float, float]       #(x, y)
     dropoff_time_window: Tuple[float, float]    #(earliest_dropoff, latest_dropoff) in hours
     weight: float = 0.00                        #in kg, default 0.0
+    status: str = "unassigned"                 # 'unassigned', 'assigned', 'picked_up', 'delivered'
 
     @staticmethod
     def from_json(t: dict) -> "Task":
@@ -19,4 +20,5 @@ class Task:
             dropoff_location=tuple(t["dropoff"]["location"]),
             dropoff_time_window=tuple(t["dropoff"]["time_window"]),
             weight=t["weight"]
+            status=t.get("status", "unassigned")
         )
