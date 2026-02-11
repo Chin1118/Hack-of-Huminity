@@ -24,9 +24,6 @@ def calculate_time(distance: float, speed: float = 50.0) -> float:
     if speed <= 0:
         return float('inf')
     return distance / speed
-    if speed <= 0:
-        return float('inf')
-    return distance / speed
 
 # Calculate heuristic value η = 1 / (CO₂_estimate + ε)
 def calculate_heuristic(co2_estimate: float) -> float:
