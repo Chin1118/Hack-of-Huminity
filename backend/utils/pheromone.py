@@ -65,7 +65,7 @@ def update_pheromone_matrix(tau: Dict[str, Dict[str, float]],
             tau[i][j] *= (1.0 - evaporation_rate)
     return tau
 
-PHEROMONE_FILE = "backend/data/pheromone_matrix.json"
+PHEROMONE_FILE = "data/pheromone_matrix.json"
 
 def save_pheromone_matrix(tau: Dict[str, Dict[str, float]], filepath: str = PHEROMONE_FILE):
     """
