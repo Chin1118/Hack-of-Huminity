@@ -11,14 +11,4 @@ class Task:
     weight: float = 0.00                        #in kg, default 0.0
     status: str = "unassigned"                 # 'unassigned', 'assigned', 'picked_up', 'delivered'
 
-    @staticmethod
-    def from_json(t: dict) -> "Task":
-        return Task(
-            id=t["id"],
-            pickup_location=tuple(t["pickup"]["location"]),
-            pickup_time_window=tuple(t["pickup"]["time_window"]),
-            dropoff_location=tuple(t["dropoff"]["location"]),
-            dropoff_time_window=tuple(t["dropoff"]["time_window"]),
-            weight=t["weight"],
-            status=t.get("status", "unassigned")
-        )
+# If do any change should change to also converters/task.py, and maybe api/schemas/task.py

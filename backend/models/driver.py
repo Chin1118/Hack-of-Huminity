@@ -10,3 +10,4 @@ class Driver:
     available: bool = True
     tasklist: list = None               # List of assigned tasks
 
+# If do any change should change to also converters/driver.py, and maybe api/schemas/driver.py
