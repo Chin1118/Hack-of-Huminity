@@ -3,7 +3,6 @@ from scipy.spatial import KDTree
 
 class TaskDispatcher:
     def __init__(self, drivers):
-
         self.available_drivers = [d for d in drivers if d["available"]]
         self.drivers_locations = np.array([d["start_location"] for d in self.available_drivers])
         
