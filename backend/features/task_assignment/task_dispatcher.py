@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import KDTree
-from api.converters.driver import update_driver
+from backend.api.converters.driver import update_driver, json_to_driver
 
 class TaskAssigner:
     def __init__(self, tasks):
@@ -35,7 +35,13 @@ class TaskAssigner:
         tasks = self.get_tasks_for_driver(driver, max_tasks=max_tasks)
         driver['task_list'] = tasks
         
-        update_driver(driver)
+        driver_id = driver.get('id') if isinstance(driver, dict) else getattr(driver, 'id', None)
+        if driver_id is not None:
+            if isinstance(driver, dict):
+                updated_driver_obj = json_to_driver(driver)
+                update_driver(driver_id, updated_driver_obj)
+            else:
+                update_driver(driver_id, driver)
 
 def assign_tasks_to_drivers(drivers, tasks, max_tasks=3):
 
