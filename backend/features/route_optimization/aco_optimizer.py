@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple, Set, Optional
 import random
 from backend.api.schemas.driver import DriverBase
 from backend.models.task import Task
-from backend.utils.pheromone import get_pheromone_value, update_pheromone_matrix, save_pheromone_matrix
+from backend.models.pheromone import get_pheromone_value, update_pheromone_matrix, save_pheromone_matrix
 from backend.features.route_optimization.cost_calculator import (
     calculate_distance, calculate_carbon_emission, calculate_time, calculate_heuristic, calculate_total_cost
 )

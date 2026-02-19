@@ -1,51 +1,44 @@
+from __future__ import annotations
+import math
+from typing import Tuple, Optional
 import numpy as np
-from typing import Tuple
-
-# Constants
-FUEL_EMISSION_FACTOR = 2.31  # kg CO2 per liter (Gasoline)
-EV_GRID_EMISSION_FACTOR = 0.5  # kg CO2 per kWh (Grid average)
-
-# Fuel Vehicle Parameters (Example: Light Van)
-FUEL_CONSUMPTION_BASE = 0.10  # Liters per km (10L/100km)
-
-# EV Parameters (Example: Electric Van)
-EV_ENERGY_CONSUMPTION = 0.20  # kWh per km
+from backend.models.emission import EmissionModel
 
 # Constants for Heuristic
 EPSILON = 0.01
 
 # Calculate Euclidean distance between two points
 def calculate_distance(loc1: Tuple[float, float], loc2: Tuple[float, float]) -> float:
-    return float(np.linalg.norm(np.array(loc1) - np.array(loc2)))
+    a = np.array(loc1, dtype=float)
+    b = np.array(loc2, dtype=float)
+    if a.shape != (2,) or b.shape != (2,):
+        raise ValueError("loc1 and loc2 must be (x, y)")
+    return float(np.linalg.norm(a - b))
 
 # Calculate CO2 emission based on distance and vehicle type
-def calculate_carbon_emission(distance: float, vehicle_type: str, payload_weight: float = 0.0) -> float:
-    vehicle_type = vehicle_type.lower()
-    
-    # Payload factor: roughly 1% extra fuel/energy per 50kg
-    load_factor = 1.0 + (payload_weight / 5000.0)  # Simplified linear increase
+def calculate_carbon_emission(distance_km: float,vehicle_type: str,payload_weight_kg: float = 0.0,model: Optional[EmissionModel] = None,) -> float:
 
-    if vehicle_type == 'fuel':
-        fuel_needed = (distance * FUEL_CONSUMPTION_BASE * load_factor) 
-        carbon_emission = fuel_needed * FUEL_EMISSION_FACTOR
-        return carbon_emission
-    elif vehicle_type == 'ev':
-        energy_needed = (distance * EV_ENERGY_CONSUMPTION * load_factor)
-        carbon_emission = energy_needed * EV_GRID_EMISSION_FACTOR
-        return carbon_emission
-    else:
-        # Default fallback or error
-        return 0.0
+    m = model or EmissionModel()
+    return m.calculate_emission(
+        vehicle_type=vehicle_type,
+        distance_km=distance_km,
+        payload_weight_kg=payload_weight_kg,
+    )
 
 # Calculate time based on distance and average speed (km/h)
 def calculate_time(distance: float, speed: float = 50.0) -> float:
+    if distance < 0:
+        raise ValueError("distance_km must be >= 0")
     if speed <= 0:
-        return float('inf')
+        return float("inf")
     return distance / speed
 
 # Calculate heuristic value η = 1 / (CO₂_estimate + ε)
 def calculate_heuristic(co2_estimate: float) -> float:
-    return 1.0 / (co2_estimate + EPSILON)
+    if not math.isfinite(co2_estimate):
+        return 0.0
+    co2 = max(0.0, float(co2_estimate))
+    return 1.0 / (co2 + EPSILON)
 
 # Calculate total cost = α * time + β * CO₂
 def calculate_total_cost(alpha: float, beta: float, time_cost: float, heuristic: float) -> float:
