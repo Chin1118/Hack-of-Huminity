@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from backend.api.routers import driver
+from backend.api.routers import task
 
 app = FastAPI(
     title="Hack of Humanity API",
@@ -8,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(driver.router, prefix="/api", tags=["drivers"])
+app.include_router(task.router, prefix="/api", tags=["tasks"])
 
 @app.get("/")
 def root():
