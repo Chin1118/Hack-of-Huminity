@@ -48,9 +48,5 @@ def calculate_heuristic(co2_estimate: float) -> float:
     return 1.0 / (co2_estimate + EPSILON)
 
 # Calculate total cost = α * time + β * CO₂
-def calculate_total_cost(alpha: float, beta: float, loc1: Tuple[float, float], loc2: Tuple[float, float], vehicle_type: str) -> float:
-    distance = calculate_distance(loc1, loc2)
-    time_cost = calculate_time(distance)
-    co2_cost = calculate_carbon_emission(distance, vehicle_type)
-    heuristic = calculate_heuristic(co2_cost)
+def calculate_total_cost(alpha: float, beta: float, time_cost: float, heuristic: float) -> float:
     return alpha * time_cost + beta * heuristic
