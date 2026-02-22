@@ -1,0 +1,15 @@
+[
+  {
+    "driver_id": 1,
+    "best_path_nodes": [
+      "D_1",
+      "T_101",
+      "T_101_D"
+    ],
+    "metrics": {
+      "time": 0.1,
+      "co2": 0.01,
+      "total_cost": 0.05
+    }
+  }
+]
