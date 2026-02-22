@@ -51,7 +51,15 @@ def create_driver(driver_data: DriverCreate):
     
     try:
         created_driver = add_driver(new_driver)
+
+        from backend.persistence.factory import get_repository
+        repo = get_repository("json")
+        try:
+            repo.save_driver(driver_to_json(created_driver))
+        except Exception as persist_error:
+            print(f"[Persistence Warning] {persist_error}")
         return DriverResponse(**driver_to_json(created_driver))
+    
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

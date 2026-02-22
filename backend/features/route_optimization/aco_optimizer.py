@@ -107,6 +107,20 @@ class ACOOptimizer:
             if ants_paths:
                 self._update_pheromones(ants_paths, ants_costs)
 
+
+        # ADD THIS BLOCK (safe persistence hook)
+        try:
+            from backend.persistence.factory import get_repository
+            repo = get_repository("json")  # change to "sqlite" if needed
+
+            repo.save_route_result({
+            "driver_id": self.driver_id,
+            "path": best_path,
+            "metrics": best_metrics
+            })
+        except Exception as e:
+            print(f"[Persistence Warning] {e}")
+        
         return {
             "driver_id": self.driver_id,
             "best_path_nodes": best_path,
