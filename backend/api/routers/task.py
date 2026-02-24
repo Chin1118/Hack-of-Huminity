@@ -7,6 +7,7 @@ from backend.api.converters.task import (
     find_task_by_id,
     add_task,
     update_task,
+    save_tasks,
     delete_task,
     task_to_json
 )
@@ -44,9 +45,7 @@ def create_task(task_data: TaskCreate):
     new_task = Task(
         id=0,  # Temporary ID, will be overwritten by add_task
         pickup_location=task_data.pickup_location,
-        pickup_time_window=task_data.pickup_time_window,
         dropoff_location=task_data.dropoff_location,
-        dropoff_time_window=task_data.dropoff_time_window,
         weight=task_data.weight,
         status=task_data.status
     )
@@ -75,9 +74,7 @@ def update_task_endpoint(task_id: int, task_data: TaskUpdate):
     updated_task = Task(
         id=task_id,
         pickup_location=task_data.pickup_location if task_data.pickup_location is not None else existing_task.pickup_location,
-        pickup_time_window=task_data.pickup_time_window if task_data.pickup_time_window is not None else existing_task.pickup_time_window,
         dropoff_location=task_data.dropoff_location if task_data.dropoff_location is not None else existing_task.dropoff_location,
-        dropoff_time_window=task_data.dropoff_time_window if task_data.dropoff_time_window is not None else existing_task.dropoff_time_window,
         weight=task_data.weight if task_data.weight is not None else existing_task.weight,
         status=task_data.status if task_data.status is not None else existing_task.status
     )

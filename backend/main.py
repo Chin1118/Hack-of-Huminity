@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from backend.api.routers import driver
 from backend.api.routers import task
+from backend.api.routers import aco_optimizer
+from backend.features.route_optimization.aco_optimizer import ACOOptimizer
 
 app = FastAPI(
     title="Hack of Humanity API",
@@ -10,6 +12,7 @@ app = FastAPI(
 
 app.include_router(driver.router, prefix="/api", tags=["drivers"])
 app.include_router(task.router, prefix="/api", tags=["tasks"])
+app.include_router(aco_optimizer.router, prefix="/api", tags=["optimization"])
 
 @app.get("/")
 def root():
@@ -18,3 +21,9 @@ def root():
         "version": "1.0.0",
         "status": "healthy"
     }
+
+def main():
+    ACOOptimizer.solve()
+
+if __name__ == "__main__":
+    main()
