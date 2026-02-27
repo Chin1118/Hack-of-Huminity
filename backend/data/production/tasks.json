@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "pickup_location": [
+      103.8558,
+      1.3004
+    ],
+    "dropoff_location": [
+      103.8675,
+      1.3182
+    ],
+    "weight": 10.0,
+    "status": "unassigned"
+  },
+  {
+    "id": 2,
+    "pickup_location": [
+      103.8198,
+      1.3521
+    ],
+    "dropoff_location": [
+      103.8500,
+      1.2800
+    ],
+    "weight": 20.0,
+    "status": "unassigned"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 101,
+    "start_location": [
+      103.8198,
+      1.3521
+    ],
+    "vehicle_type": "ev",
+    "capacity": 150.0,
+    "available": true
+  }
+]

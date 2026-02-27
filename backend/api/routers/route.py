@@ -1,10 +1,11 @@
+import json
 from typing import List
 from fastapi import APIRouter, HTTPException, status
+from pydantic import ValidationError
 from pydantic import BaseModel
 
-from backend.models.driver import Driver
-from backend.models.task import Task
 from backend.utils.road_network import RoadNetwork
+from backend.utils.route_data_loader import load_route_seed_data
 
 router = APIRouter(tags=["routing"])
 
@@ -27,24 +28,26 @@ def get_route(req: GetRouteRequest):
             detail="ordered_node_ids must be a list of non-empty strings.",
         )
 
-    # Temporary dummy objects for RoadNetwork initialization.
-    dummy_driver = Driver(
-        id=1,
-        start_location=(-122.4194, 37.7749),
-        vehicle_type="ev",
-        capacity=100.0,
-        available=True,
-    )
-    dummy_task = Task(
-        id=1,
-        pickup_location=(-122.4312, 37.7739),
-        dropoff_location=(-122.4000, 37.7900),
-        weight=5.0,
-        status="unassigned",
-    )
+    try:
+        drivers, tasks = load_route_seed_data()
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Route seed file missing: {exc}",
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Invalid JSON in route seed data: {exc}",
+        ) from exc
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Invalid route seed schema: {exc}",
+        ) from exc
 
     try:
-        network = RoadNetwork(drivers=[dummy_driver], tasks=[dummy_task], mode="mapbox")
+        network = RoadNetwork(drivers=drivers, tasks=tasks, mode="mapbox")
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

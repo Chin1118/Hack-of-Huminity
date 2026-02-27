@@ -1,14 +1,8 @@
-import json
-import os
 from typing import List, Optional
-from backend.models.driver import Driver
+import json
 
-# JSON file path
-DRIVERS_JSON_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    "data",
-    "drivers.json"
-)
+from backend.models.driver import Driver
+from backend.data_access.data_provider import get_data_provider
 
 # Convert JSON dict to Driver object
 def json_to_driver(data: dict) -> Driver:
@@ -34,25 +28,17 @@ def driver_to_json(driver: Driver) -> dict:
 
 # Load all drivers from JSON file
 def load_drivers() -> List[Driver]:
-    if not os.path.exists(DRIVERS_JSON_PATH): # Check if the JSON file exists
-        return []
-    
     try:
-        with open(DRIVERS_JSON_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return [json_to_driver(item) for item in data]
+        data = get_data_provider().load_list("drivers")
+        return [json_to_driver(item) for item in data]
     except (json.JSONDecodeError, KeyError) as e:
         raise ValueError(f"JSON file format error: {e}")
 
 
 # Save drivers to JSON file
 def save_drivers(drivers: List[Driver]) -> None:
-    os.makedirs(os.path.dirname(DRIVERS_JSON_PATH), exist_ok=True) # Create the directory if it doesn't exist
-    
     data = [driver_to_json(driver) for driver in drivers]
-    
-    with open(DRIVERS_JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    get_data_provider().save_list("drivers", data)
 
 
 # Find a single driver by ID

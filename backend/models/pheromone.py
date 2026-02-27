@@ -1,6 +1,7 @@
 from typing import List, Dict
 import json
 import os
+from backend.data_access.data_provider import get_data_provider
 
 def init_pheromone_matrix(drivers: List, tasks: List, init_value: float = 1.0) -> Dict[str, Dict[str, float]]:
     """
@@ -65,21 +66,34 @@ def update_pheromone_matrix(tau: Dict[str, Dict[str, float]],
             tau[i][j] *= (1.0 - evaporation_rate)
     return tau
 
-PHEROMONE_FILE = "data/pheromone_matrix.json"
+PHEROMONE_DATASET = "pheromone_matrix"
 
-def save_pheromone_matrix(tau: Dict[str, Dict[str, float]], filepath: str = PHEROMONE_FILE):
+def save_pheromone_matrix(
+    tau: Dict[str, Dict[str, float]],
+    filepath: str | None = None
+):
     """
     Save pheromone matrix to a JSON file.
     """
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'w') as f:
-        json.dump(tau, f)
+    if filepath:
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(tau, f)
+        return
 
-def load_pheromone_matrix(filepath: str = PHEROMONE_FILE) -> Dict[str, Dict[str, float]]:
+    get_data_provider().save_dict(PHEROMONE_DATASET, tau)
+
+def load_pheromone_matrix(
+    filepath: str | None = None
+) -> Dict[str, Dict[str, float]]:
     """
     Load pheromone matrix from a JSON file. return None if file not exists
     """
-    if not os.path.exists(filepath):
-        return None
-    with open(filepath, 'r') as f:
-        return json.load(f)
+    if filepath:
+        if not os.path.exists(filepath):
+            return None
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    data = get_data_provider().load_dict(PHEROMONE_DATASET)
+    return data or None

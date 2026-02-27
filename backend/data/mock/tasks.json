@@ -1,0 +1,15 @@
+[
+  {
+    "id": 201,
+    "pickup_location": [
+      103.8558,
+      1.3004
+    ],
+    "dropoff_location": [
+      103.8675,
+      1.3182
+    ],
+    "weight": 7.5,
+    "status": "unassigned"
+  }
+]

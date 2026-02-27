@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "start_location": [
+      103.8519,
+      1.2903
+    ],
+    "vehicle_type": "fuel",
+    "capacity": 500.0,
+    "available": true
+  },
+  {
+    "id": 2,
+    "start_location": [
+      103.8331,
+      1.3048
+    ],
+    "vehicle_type": "ev",
+    "capacity": 300.0,
+    "available": false
+  }
+]

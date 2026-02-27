@@ -1,14 +1,8 @@
-import json
-import os
 from typing import List, Optional
-from backend.models.task import Task
+import json
 
-# JSON file path
-TASKS_JSON_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    "data",
-    "tasks.json"
-)
+from backend.models.task import Task
+from backend.data_access.data_provider import get_data_provider
 
 # Convert JSON dict to Task object
 def json_to_task(data: dict) -> Task:
@@ -34,25 +28,17 @@ def task_to_json(task: Task) -> dict:
 
 # Load all tasks from JSON file
 def load_tasks() -> List[Task]:
-    if not os.path.exists(TASKS_JSON_PATH): # Check if the JSON file exists
-        return []
-    
     try:
-        with open(TASKS_JSON_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return [json_to_task(item) for item in data]
+        data = get_data_provider().load_list("tasks")
+        return [json_to_task(item) for item in data]
     except (json.JSONDecodeError, KeyError) as e:
         raise ValueError(f"JSON file format error: {e}")
 
 
 # Save tasks to JSON file
 def save_tasks(tasks: List[Task]) -> None:
-    os.makedirs(os.path.dirname(TASKS_JSON_PATH), exist_ok=True) # Create the directory if it doesn't exist
-    
     data = [task_to_json(task) for task in tasks]
-    
-    with open(TASKS_JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    get_data_provider().save_list("tasks", data)
 
 
 # Find a single task by ID
