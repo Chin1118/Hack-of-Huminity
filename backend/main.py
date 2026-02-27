@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from backend.api.routers import driver
 from backend.api.routers import task
 from backend.api.routers import aco_optimizer
+from backend.api.routers import route
 from backend.features.route_optimization.aco_optimizer import ACOOptimizer
 
 app = FastAPI(
@@ -13,6 +14,7 @@ app = FastAPI(
 app.include_router(driver.router, prefix="/api", tags=["drivers"])
 app.include_router(task.router, prefix="/api", tags=["tasks"])
 app.include_router(aco_optimizer.router, prefix="/api", tags=["optimization"])
+app.include_router(route.router, prefix="/api", tags=["routing"])
 
 @app.get("/")
 def root():
