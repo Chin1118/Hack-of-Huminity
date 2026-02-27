@@ -3,6 +3,8 @@ import math
 from typing import Tuple, List, Dict, Any, Optional, Literal
 import requests
 from backend.config import MAPBOX_TOKEN
+import folium
+from typing import Any
 
 LngLat = Tuple[float, float]  # (lng, lat)
 MAX_COORDS_PER_REQ = 25
@@ -83,6 +85,33 @@ class MapboxMatrixClient:
                         distances[i][j] = diss[li][lj]
 
         return {"durations": durations, "distances": distances}
+
+    def get_directions(self, coords: List[LngLat]) -> Dict[str, Any]:
+        """
+        Fetches the detailed route geometry and turn-by-turn data for a sequence of points.
+        Note: Mapbox driving profile allows up to 25 coordinates per request.
+        """
+        if len(coords) < 2:
+            raise ValueError("Directions API needs at least 2 coordinates")
+        if len(coords) > MAX_COORDS_PER_REQ:
+            raise ValueError(f"Directions API allows max {MAX_COORDS_PER_REQ} waypoints per request.")
+
+        # Mapbox expects longitude,latitude separated by semicolons
+        coords_str = ";".join([f"{lng},{lat}" for lng, lat in coords])
+        url = f"https://api.mapbox.com/directions/v5/mapbox/{self.profile}/{coords_str}"
+
+        params = {
+            "access_token": self.token,
+            "geometries": "geojson",  # 'geojson' is usually easiest for frontend mapping (or 'polyline6')
+            "overview": "full",       # gets the high-resolution path
+            "steps": "false"          # set to 'true' if you want turn-by-turn instructions
+        }
+
+        r = requests.get(url, params=params, timeout=20)
+        if r.status_code != 200:
+            raise RuntimeError(f"Mapbox Directions error {r.status_code}: {r.text}")
+
+        return r.json()
 
 
 class RoadNetwork:
@@ -206,3 +235,91 @@ class RoadNetwork:
 
         dist_km = self.get_distance_between_nodes(node_a_id, node_b_id)
         return self._euclidean_time_h(dist_km)
+    
+    def get_tour_route(self, ordered_node_ids: List[str]) -> Optional[Dict[str, Any]]:
+        """
+        Takes an ordered list of node IDs (e.g., ['D_1', 'T_1', 'T_1_D'])
+        and returns the Mapbox Directions response containing the route geometry.
+        """
+        if self.mode != "mapbox":
+            print("Warning: Directions API only available in mapbox mode.")
+            return None
+
+        # Convert the node IDs back into their actual LngLat coordinates
+        route_coords = [self.locations[nid] for nid in ordered_node_ids if nid in self.locations]
+        
+        if len(route_coords) < 2:
+            raise ValueError("Need at least 2 valid nodes to generate a route.")
+
+        # If the tour is longer than Mapbox's 25 waypoint limit, you either 
+        # need to chunk the requests and stitch them together, or drop intermediate 
+        # points and only route the key stops. For now, we'll enforce the limit:
+        if len(route_coords) > MAX_COORDS_PER_REQ:
+             raise ValueError(f"Tour too long for a single Mapbox request ({len(route_coords)} > 25). Chunking required.")
+
+        if not self._matrix_client:
+            return None
+
+        return self._matrix_client.get_directions(route_coords)
+    
+    
+""" 
+# 1. Quick mock classes just to test the initialization
+class MockDriver:
+    def __init__(self, id, lng, lat):
+        self.id = id
+        self.start_location = (lng, lat)
+
+class MockTask:
+    def __init__(self, id, p_lng, p_lat, d_lng, d_lat):
+        self.id = id
+        self.pickup_location = (p_lng, p_lat)
+        self.dropoff_location = (d_lng, d_lat)
+
+
+if __name__ == "__main__":
+    # 2. Setup some test coordinates (Replace with your actual test locations)
+    # E.g., San Francisco coordinates
+    d1 = MockDriver("1", -122.4194, 37.7749)
+    t1 = MockTask("1", -122.4312, 37.7739, -122.4000, 37.7900)
+
+    # 3. Initialize your network
+    # Make sure your MAPBOX_TOKEN is loaded in your environment/config
+    network = RoadNetwork(
+        drivers=[d1], 
+        tasks=[t1], 
+        mode="mapbox"
+    )
+
+    # 4. Get the route for a mock tour: Driver 1 -> Task 1 Pickup -> Task 1 Dropoff
+    tour = ["D_1", "T_1", "T_1_D"]
+    route_data = network.get_tour_route(tour)
+
+    if route_data and "routes" in route_data and len(route_data["routes"]) > 0:
+        # Extract the GeoJSON geometry Mapbox returned
+        geometry = route_data["routes"][0]["geometry"]
+        
+        # Mapbox returns [longitude, latitude], but Folium centers on [latitude, longitude]
+        start_lon, start_lat = geometry["coordinates"][0]
+        
+        # Create an interactive map centered at the start location
+        m = folium.Map(location=[start_lat, start_lon], zoom_start=13)
+        
+        # Add the route line to the map
+        folium.GeoJson(
+            geometry,
+            name="ACO Tour Route",
+            style_function=lambda x: {'color': 'blue', 'weight': 5, 'opacity': 0.8}
+        ).add_to(m)
+        
+        # Add markers for the stops
+        for node_id in tour:
+            lon, lat = network.get_location(node_id)
+            folium.Marker([lat, lon], popup=node_id).add_to(m)
+        
+        # Save to an HTML file and open it!
+        m.save("test_route.html")
+        print("Map saved to test_route.html! Open this file in your browser.")
+    else:
+        print("Failed to get route data:", route_data)
+"""
