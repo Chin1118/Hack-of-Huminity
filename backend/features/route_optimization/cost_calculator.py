@@ -1,37 +1,25 @@
-from __future__ import annotations
 import math
 from typing import Tuple, Optional
 import numpy as np
 from backend.models.emission import EmissionModel
+from backend.utils.road_network import RoadNetwork;
 
 # Constants for Heuristic
 EPSILON = 0.01
 
-# Calculate Euclidean distance between two points
-def calculate_distance(loc1: Tuple[float, float], loc2: Tuple[float, float]) -> float:
-    a = np.array(loc1, dtype=float)
-    b = np.array(loc2, dtype=float)
-    if a.shape != (2,) or b.shape != (2,):
-        raise ValueError("loc1 and loc2 must be (x, y)")
-    return float(np.linalg.norm(a - b))
+def calculate_distance(road_network: RoadNetwork, node_a_id: str, node_b_id: str) -> float:
+    return road_network.get_distance_between_nodes(node_a_id, node_b_id)
+
+def calculate_time(road_network: RoadNetwork, node_a_id: str, node_b_id: str) -> float:
+    return road_network.get_travel_time_between_nodes(node_a_id, node_b_id)
 
 # Calculate CO2 emission based on distance and vehicle type
-def calculate_carbon_emission(distance_km: float,vehicle_type: str,payload_weight_kg: float = 0.0,model: Optional[EmissionModel] = None,) -> float:
-
-    m = model or EmissionModel()
-    return m.calculate_emission(
+def calculate_carbon_emission(model: EmissionModel, distance_km: float, vehicle_type: str, payload_weight_kg: float = 0.0) -> float:
+    return model.calculate_emission(
         vehicle_type=vehicle_type,
         distance_km=distance_km,
         payload_weight_kg=payload_weight_kg,
     )
-
-# Calculate time based on distance and average speed (km/h)
-def calculate_time(distance: float, speed: float = 50.0) -> float:
-    if distance < 0:
-        raise ValueError("distance_km must be >= 0")
-    if speed <= 0:
-        return float("inf")
-    return distance / speed
 
 # Calculate heuristic value η = 1 / (CO₂_estimate + ε)
 def calculate_heuristic(co2_estimate: float) -> float:

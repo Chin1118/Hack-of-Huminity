@@ -15,9 +15,7 @@ def json_to_task(data: dict) -> Task:
     return Task(
         id=data["id"],
         pickup_location=tuple(data["pickup_location"]),
-        pickup_time_window=tuple(data["pickup_time_window"]),
         dropoff_location=tuple(data["dropoff_location"]),
-        dropoff_time_window=tuple(data["dropoff_time_window"]),
         weight=data.get("weight", 0.0),
         status=data.get("status", "unassigned")
     )
@@ -28,9 +26,7 @@ def task_to_json(task: Task) -> dict:
     return {
         "id": task.id,
         "pickup_location": list(task.pickup_location),
-        "pickup_time_window": list(task.pickup_time_window),
         "dropoff_location": list(task.dropoff_location),
-        "dropoff_time_window": list(task.dropoff_time_window),
         "weight": task.weight,
         "status": task.status
     }

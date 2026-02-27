@@ -6,9 +6,11 @@ from backend.models.pheromone import get_pheromone_value, update_pheromone_matri
 from backend.features.route_optimization.cost_calculator import (
     calculate_distance, calculate_carbon_emission, calculate_time, calculate_heuristic, calculate_total_cost
 )
+from backend.utils.road_network import RoadNetwork
 
 class ACOOptimizer:
     def __init__(self, 
+                 matrix: 'RoadNetwork',
                  driver: DriverBase, 
                  tasks: List[Task], 
                  pheromone_matrix: Dict[str, Dict[str, float]],
@@ -22,7 +24,7 @@ class ACOOptimizer:
                  cost_beta: float = 0.5,    # CO2 cost weight
                  epsilon: float = 0.01      # Avoid division by zero
                  ):
-        
+        self.matrix = matrix
         self.driver = driver
         self.tasks = tasks
         self.pheromone_matrix = pheromone_matrix
@@ -54,28 +56,27 @@ class ACOOptimizer:
             self.locations[f"T_{t.id}_D"] = t.dropoff_location
 
     def _get_heuristic(self, from_node: str, to_node: str) -> float:
-        loc1 = self.locations[from_node]
-        loc2 = self.locations[to_node]
-        dist = calculate_distance(loc1, loc2)
-        co2_emission = calculate_carbon_emission(dist, self.driver.vehicle_type)
+        dist = self.matrix.distance_km(from_node, to_node)
+        co2_emission = calculate_carbon_emission(self.driver.emission_model, dist, self.driver.vehicle_type)
         return calculate_heuristic(co2_emission)
 
     # Calculate total cost of a path. Returns (total_cost, total_time, total_co2)    
     def _calculate_path_cost(self, path: List[str]) -> Tuple[float, float, float]:
         total_dist = 0.0
         total_co2 = 0.0
-        
+        total_time = 0.0
         if not path:
             return 0.0, 0.0, 0.0
 
         for i in range(len(path) - 1):
             u, v = path[i], path[i+1]
-            dist = calculate_distance(self.locations[u], self.locations[v])
+            dist = self.matrix.distance_km(u, v)
+            time = self.matrix.time_h(u, v)
             total_dist += dist
-            total_co2 += calculate_carbon_emission(dist, self.driver.vehicle_type)
-            
-        total_time = calculate_time(total_dist) # Simple time calculation
-        total_cost = calculate_total_cost(total_time, total_co2, self.cost_alpha, self.cost_beta)
+            total_time += time
+            total_co2 += calculate_carbon_emission(self.driver.emission_model, dist, self.driver.vehicle_type)
+
+        total_cost = calculate_total_cost(self.cost_alpha, self.cost_beta, total_time, total_co2)
         
         return total_cost, total_time, total_co2
 
