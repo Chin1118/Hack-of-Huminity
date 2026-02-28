@@ -17,8 +17,8 @@ def calculate_time(road_network: RoadNetwork, node_a_id: str, node_b_id: str) ->
 def calculate_carbon_emission(model: EmissionModel, distance_km: float, vehicle_type: str, payload_weight_kg: float = 0.0) -> float:
     return model.calculate_emission(
         vehicle_type=vehicle_type,
-        distance_km=distance_km,
-        payload_weight_kg=payload_weight_kg,
+        distance=distance_km,
+        payload_weight=payload_weight_kg,
     )
 
 # Calculate heuristic value η = 1 / (CO₂_estimate + ε)

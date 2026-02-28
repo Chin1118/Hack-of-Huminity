@@ -1,28 +1,80 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
-from typing import Tuple, Optional
 
 
 class TaskBase(BaseModel):
-    pickup_location: Tuple[float, float] = Field(..., description="Pickup location (lat, lon)")
-    dropoff_location: Tuple[float, float] = Field(..., description="Dropoff location (lat, lon)")
-    weight: float = Field(default=0.0, ge=0, description="Weight of the task (kg)")
-    status: str = Field(default="unassigned", description="Status of the task") # e.g., 'unassigned', 'assigned', 'completed'
+    pickup_location: list[float] = Field(
+        ...,
+        min_length=2,
+        max_length=2,
+        description="Pickup location [lng, lat]",
+    )
+    dropoff_location: list[float] = Field(
+        ...,
+        min_length=2,
+        max_length=2,
+        description="Dropoff location [lng, lat]",
+    )
+    note: Optional[str] = Field(default=None, description="Task note")
+    type: Optional[str] = Field(default=None, description="Task type")
+    status: Optional[str] = Field(default=None, description="Task status")
 
 
 class TaskCreate(TaskBase):
-    # Create Task model
-    pass
+    driver_id: Optional[str] = None
 
 
 class TaskUpdate(BaseModel):
-    # Update Task model
-    pickup_location: Optional[Tuple[float, float]] = Field(None, description="Pickup location (lat, lon)")  
-    dropoff_location: Optional[Tuple[float, float]] = Field(None, description="Dropoff location (lat, lon)")  
-    weight: Optional[float] = Field(None, ge=0, description="Weight of the task (kg)")
-    status: Optional[str] = Field(None, description="Status of the task")  # e.g., 'unassigned', 'assigned', 'completed'
+    pickup_location: Optional[list[float]] = Field(default=None, min_length=2, max_length=2)
+    dropoff_location: Optional[list[float]] = Field(default=None, min_length=2, max_length=2)
+    note: Optional[str] = None
+    type: Optional[str] = None
+    status: Optional[str] = None
+
+
+class TaskArriveRequest(BaseModel):
+    current_location: list[float] = Field(
+        ...,
+        min_length=2,
+        max_length=2,
+        description="Current location [lng, lat]",
+    )
+    radius_m: float = Field(
+        default=120.0,
+        gt=0,
+        le=1000.0,
+        description="Arrival radius in meters",
+    )
+
 
 class TaskResponse(TaskBase):
-    # API Response model (including ID)
-    id: int
-    class Config:
-        from_attributes = True
+    id: str
+    driver_id: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class TaskIdsResponse(BaseModel):
+    task_ids: list[str]
+
+
+class TaskAssignmentItem(BaseModel):
+    task_id: str
+    task_name: str
+
+
+class DriverTaskAssignments(BaseModel):
+    driver_id: str
+    driver_name: str
+    tasks: list[TaskAssignmentItem]
+
+
+class TodayAssignmentsResponse(BaseModel):
+    date_utc: str
+    total_assigned_tasks: int
+    assignments: list[DriverTaskAssignments]
+
+
+class PendingTasksCountResponse(BaseModel):
+    pending_tasks: int

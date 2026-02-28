@@ -1,29 +1,28 @@
+from typing import Literal, Optional
+
 from pydantic import BaseModel, Field
-from typing import Tuple, Optional
+
+VehicleType = Literal["fuel", "electric", "hybrid"]
 
 
 class DriverBase(BaseModel):
-    start_location: Tuple[float, float] = Field(..., description="Start location (x, y)")
-    vehicle_type: str = Field(..., description="Vehicle type: 'fuel' or 'ev'")
+    start_location: list[float] = Field(
+        ...,
+        min_length=2,
+        max_length=2,
+        description="Start location [lng, lat]",
+    )
+    vehicle_type: VehicleType = Field(default="fuel")
     capacity: float = Field(default=0.0, ge=0, description="Capacity (kg)")
-    available: bool = Field(default=True, description="Available")
-
-
-class DriverCreate(DriverBase):
-    # Create Driver model
-    pass
+    available: bool = Field(default=True, description="Availability")
 
 
 class DriverUpdate(BaseModel):
-    # Update Driver model
-    start_location: Optional[Tuple[float, float]] = None
-    vehicle_type: Optional[str] = None
+    start_location: Optional[list[float]] = Field(default=None, min_length=2, max_length=2)
+    vehicle_type: Optional[VehicleType] = None
     capacity: Optional[float] = Field(default=None, ge=0)
     available: Optional[bool] = None
 
 
 class DriverResponse(DriverBase):
-    # API Response model (including ID)
-    id: int
-    class Config:
-        from_attributes = True
+    id: str

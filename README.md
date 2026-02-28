@@ -47,4 +47,21 @@ uvicorn backend.main:app --reload
 ---
 
 
+acc
+
+amberng999@gmail.com
+Abcd1234.
+
+honger1206@gmail.com
+Abcd1234.
+
+jwchow1412@gmail.com
+Abcd1234@
+
+a04041121@gmail.com
+Abcd1234.
+
+chin1121@1utar.my
+Abcd1234.
+
 

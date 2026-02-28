@@ -72,14 +72,22 @@ def save_pheromone_matrix(tau: Dict[str, Dict[str, float]], filepath: str = PHER
     Save pheromone matrix to a JSON file.
     """
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'w') as f:
-        json.dump(tau, f)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(tau, f, ensure_ascii=False, indent=2)
 
-def load_pheromone_matrix(filepath: str = PHEROMONE_FILE) -> Dict[str, Dict[str, float]]:
+def load_pheromone_matrix(filepath: str = PHEROMONE_FILE) -> Dict[str, Dict[str, float]] | None:
     """
     Load pheromone matrix from a JSON file. return None if file not exists
     """
     if not os.path.exists(filepath):
         return None
-    with open(filepath, 'r') as f:
-        return json.load(f)
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            raw = f.read().strip()
+            if not raw:
+                return None
+            data = json.loads(raw)
+            return data if isinstance(data, dict) else None
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+        # Corrupted or incompatible cache should not break request path.
+        return None
