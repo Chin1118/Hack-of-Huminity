@@ -73,4 +73,19 @@ You may self create account but that will be driver acc
 | a04041121@gmail.com | Cjunxi1121. |
 | chin1121@1utar.my | Abcd1234. |
 
+---
+
+## 4. Environment Variables
+
+Please add the following keys to the `.env` file in both the `frontend` and `backend` folders.  
+Note: These secret keys will be deactivated within 7 days.
+
+```env
+MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoiY2hpbjExMjExIiwiYSI6ImNtazc0MnV2ajAwb2EzZHIybXg2czFodnEifQ.0yWAnhvBMlynUDlqrZqYOg
+SUPABASE_URL=https://wmviaqwmumymwycxypfn.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdmlhcXdtdW15bXd5Y3h5cGZuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjEzNzM0OCwiZXhwIjoyMDg3NzEzMzQ4fQ.obinERH_C9B2N-1QnRNGK_Lqgo64lK46ws1UjYOCfJ0
+MOCK_MODE=true
+```
+
+
 
