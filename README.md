@@ -46,22 +46,31 @@ uvicorn backend.main:app --reload
 
 ---
 
+## Frontend Emulator Setup
 
-acc
+The frontend was developed and tested using the Android Studio Emulator with the following AVD configuration:
 
-amberng999@gmail.com
-Abcd1234.
+- Device: Pixel 7
+- Android API Level: 34
 
-honger1206@gmail.com
-Abcd1234.
+---
 
-jwchow1412@gmail.com
-Abcd1234@
+## 3. Demo Accounts
+You may self create account but that will be driver acc
 
-a04041121@gmail.com
-Abcd1234.
+### Admin Account
 
-chin1121@1utar.my
-Abcd1234.
+| Email | Password |
+| --- | --- |
+| amberng999@gmail.com | Abcd1234@ |
+
+### Driver Accounts
+
+| Email | Password |
+| --- | --- |
+| honger1206@gmail.com | Abcd1234. |
+| jwchow1412@gmail.com | Abcd1234@ |
+| a04041121@gmail.com | Cjunxi1121. |
+| chin1121@1utar.my | Abcd1234. |
 
 
